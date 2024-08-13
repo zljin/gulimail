@@ -4,12 +4,9 @@ import java.util.Arrays;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.zljin.gulimall.member.feign.CouponFeignService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.zljin.gulimall.member.entity.UserEntity;
 import com.zljin.gulimall.member.service.UserService;
@@ -30,6 +27,17 @@ import com.zljin.gulimall.common.utils.R;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    CouponFeignService couponFeignService;
+
+    @GetMapping("/coupons")
+    public R getCoupons(){
+        UserEntity user = new UserEntity();
+        user.setNickname("leonard");
+        R memberCoupons = couponFeignService.memberCoupons();
+        return R.ok().put("member",user).put("coupons",memberCoupons.get("coupons"));
+    }
 
     /**
      * 列表

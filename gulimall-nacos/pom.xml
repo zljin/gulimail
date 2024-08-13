@@ -1,18 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.zljin.gulimall</groupId>
-        <artifactId>gulimall</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </parent>
     <groupId>com.alibaba.nacos</groupId>
     <artifactId>gulimall-nacos</artifactId>
     <name>gulimall-nacos</name>
 
     <properties>
         <!-- 项目版本号 -->
-        <spring-boot.version>2.7.18</spring-boot.version>
+        <spring-boot.version>2.7.17</spring-boot.version>
         <spring-cloud.version>2021.0.8</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.6.0</spring-cloud-alibaba.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
