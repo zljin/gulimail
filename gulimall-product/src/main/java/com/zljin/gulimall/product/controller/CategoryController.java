@@ -34,12 +34,9 @@ public class CategoryController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
-    //@RequiresPermissions("product:category:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = categoryService.queryPage(params);
-
-        return R.ok().put("page", page);
+    @RequestMapping("/list/tree")
+    public R listWithTree(){
+        return R.ok().put("data", categoryService.listWithTree());
     }
 
 

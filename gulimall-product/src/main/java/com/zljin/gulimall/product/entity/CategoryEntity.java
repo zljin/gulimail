@@ -1,10 +1,13 @@
 package com.zljin.gulimall.product.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -48,5 +51,11 @@ public class CategoryEntity implements Serializable {
 	 * 计量单位
 	 */
 	private String unit;
+
+	/**
+	 * 子类别，ignore 表的field
+	 */
+	@TableField(exist = false)
+	private List<CategoryEntity> children;
 
 }

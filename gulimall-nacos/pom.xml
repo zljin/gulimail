@@ -4,6 +4,7 @@
     <groupId>com.alibaba.nacos</groupId>
     <artifactId>gulimall-nacos</artifactId>
     <name>gulimall-nacos</name>
+    <version>1.0.0</version>
 
     <properties>
         <!-- 项目版本号 -->
