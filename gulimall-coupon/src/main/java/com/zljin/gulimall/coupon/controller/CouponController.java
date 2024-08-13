@@ -5,11 +5,7 @@ import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.zljin.gulimall.coupon.entity.CouponEntity;
 import com.zljin.gulimall.coupon.service.CouponService;
@@ -30,6 +26,20 @@ import com.zljin.gulimall.common.utils.R;
 public class CouponController {
     @Autowired
     private CouponService couponService;
+
+
+    /**
+     *
+     * 被gulimall-member 服务远程调用的接口，provider
+     *
+     */
+    @GetMapping("/member/list")
+    public R memberCoupons(){
+        CouponEntity coupon = new CouponEntity();
+        coupon.setCouponName("满100减10");
+        return R.ok().put("coupons",Arrays.asList(coupon));
+    }
+
 
     /**
      * 列表
