@@ -26,7 +26,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<CategoryEntity> page = this.page(
                 new Query<CategoryEntity>().getPage(params),
-                new QueryWrapper<CategoryEntity>()
+                new QueryWrapper<>()
         );
 
         return new PageUtils(page);
@@ -35,9 +35,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public List<CategoryEntity> listWithTree() {
         List<CategoryEntity> categoryEntities = baseMapper.selectList(null);
-        return categoryEntities.stream().filter(t->t.getParentId()==0)
-                .map(t->{
-                    t.setChildren(getChildren(t,categoryEntities));
+        return categoryEntities.stream().filter(t -> t.getParentCid() == 0)
+                .map(t -> {
+                    t.setChildren(getChildren(t, categoryEntities));
                     return t;
                 }).collect(Collectors.toList());
     }
@@ -46,22 +46,22 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public void removeMenuByIds(List<Long> ids) {
         boolean flag = true;
         List<CategoryEntity> categoryEntities = baseMapper.selectList(null);
-        for(int i = 0;i<ids.size();i++){
+        for (int i = 0; i < ids.size(); i++) {
             Long id = ids.get(i);
             CategoryEntity categoryEntity = baseMapper.selectById(id);
-            if(CollectionUtil.isNotEmpty(getChildren(categoryEntity,categoryEntities))){
+            if (CollectionUtil.isNotEmpty(getChildren(categoryEntity, categoryEntities))) {
                 flag = false;
                 log.info("被删除的菜单，又被其他地方引用，无法删除");
                 break;
             }
         }
-        if(flag){
+        if (flag) {
             baseMapper.deleteBatchIds(ids);
         }
     }
 
     private List<CategoryEntity> getChildren(CategoryEntity categoryEntity, List<CategoryEntity> categoryEntities) {
-        return categoryEntities.stream().filter(t -> t.getParentId().equals(categoryEntity.getId())).map(t -> {
+        return categoryEntities.stream().filter(t -> t.getParentCid().equals(categoryEntity.getCatId())).map(t -> {
             t.setChildren(getChildren(t, categoryEntities));
             return t;
         }).sorted((menu1, menu2) -> {

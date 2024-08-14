@@ -12,7 +12,7 @@ import lombok.Data;
  * 
  * @author leonard
  * @email leoanrd_zou@163.com
- * @date 2024-08-13 07:09:57
+ * @date 2024-08-14 11:49:23
  */
 @Data
 @TableName("pms_sku_images")
@@ -31,14 +31,14 @@ public class SkuImagesEntity implements Serializable {
 	/**
 	 * 图片地址
 	 */
-	private String url;
+	private String imgUrl;
 	/**
 	 * 排序
 	 */
-	private Integer sort;
+	private Integer imgSort;
 	/**
 	 * 默认图[0 - 不是默认图，1 - 是默认图]
 	 */
-	private Integer defaultStatus;
+	private Integer defaultImg;
 
 }

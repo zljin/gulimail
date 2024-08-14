@@ -3,6 +3,7 @@ package com.zljin.gulimall.product.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+//import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +23,7 @@ import com.zljin.gulimall.common.utils.R;
  *
  * @author leonard
  * @email leoanrd_zou@163.com
- * @date 2024-08-13 07:09:58
+ * @date 2024-08-14 11:49:24
  */
 @RestController
 @RequestMapping("product/attr")
@@ -45,10 +46,10 @@ public class AttrController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @RequestMapping("/info/{attrId}")
     //@RequiresPermissions("product:attr:info")
-    public R info(@PathVariable("id") Long id){
-		AttrEntity attr = attrService.getById(id);
+    public R info(@PathVariable("attrId") Long attrId){
+		AttrEntity attr = attrService.getById(attrId);
 
         return R.ok().put("attr", attr);
     }
@@ -80,8 +81,8 @@ public class AttrController {
      */
     @RequestMapping("/delete")
     //@RequiresPermissions("product:attr:delete")
-    public R delete(@RequestBody Long[] ids){
-		attrService.removeByIds(Arrays.asList(ids));
+    public R delete(@RequestBody Long[] attrIds){
+		attrService.removeByIds(Arrays.asList(attrIds));
 
         return R.ok();
     }

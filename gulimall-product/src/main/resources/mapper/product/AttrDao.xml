@@ -5,16 +5,16 @@
 
 	<!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.zljin.gulimall.product.entity.AttrEntity" id="attrMap">
-        <result property="id" column="id"/>
-        <result property="name" column="name"/>
+        <result property="attrId" column="attr_id"/>
+        <result property="attrName" column="attr_name"/>
         <result property="searchType" column="search_type"/>
+        <result property="valueType" column="value_type"/>
         <result property="icon" column="icon"/>
         <result property="valueSelect" column="value_select"/>
-        <result property="type" column="type"/>
+        <result property="attrType" column="attr_type"/>
         <result property="enable" column="enable"/>
+        <result property="catelogId" column="catelog_id"/>
         <result property="showDesc" column="show_desc"/>
-        <result property="categoryId" column="category_id"/>
-        <result property="groupId" column="group_id"/>
     </resultMap>
 
 

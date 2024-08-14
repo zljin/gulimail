@@ -16,7 +16,7 @@ import lombok.Data;
  * 
  * @author leonard
  * @email leoanrd_zou@163.com
- * @date 2024-08-13 07:09:57
+ * @date 2024-08-14 11:49:23
  */
 @Data
 @TableName("pms_category")
@@ -27,7 +27,7 @@ public class CategoryEntity implements Serializable {
 	 * 分类id
 	 */
 	@TableId
-	private Long id;
+	private Long catId;
 	/**
 	 * 分类名称
 	 */
@@ -35,7 +35,11 @@ public class CategoryEntity implements Serializable {
 	/**
 	 * 父分类id
 	 */
-	private Long parentId;
+	private Long parentCid;
+	/**
+	 * 层级
+	 */
+	private Integer catLevel;
 	/**
 	 * 是否显示[0-不显示，1显示]
 	 * @leonard 用于逻辑删除，
@@ -47,7 +51,7 @@ public class CategoryEntity implements Serializable {
 	 *       logic-not-delete-value: 0
 	 */
 	@TableLogic(value = "1",delval = "0")
-	private Integer status;
+	private Integer showStatus;
 	/**
 	 * 排序
 	 */
@@ -59,7 +63,11 @@ public class CategoryEntity implements Serializable {
 	/**
 	 * 计量单位
 	 */
-	private String unit;
+	private String productUnit;
+	/**
+	 * 商品数量
+	 */
+	private Integer productCount;
 
 	/**
 	 * 子类别，ignore 表的field
