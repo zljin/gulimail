@@ -1,20 +1,18 @@
 package com.zljin.gulimall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.zljin.gulimall.product.entity.BrandEntity;
-import com.zljin.gulimall.product.service.BrandService;
 import com.zljin.gulimall.common.utils.PageUtils;
 import com.zljin.gulimall.common.utils.R;
+import com.zljin.gulimall.product.entity.BrandEntity;
+import com.zljin.gulimall.product.service.BrandService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.BindResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 
 
@@ -58,10 +56,17 @@ public class BrandController {
      * 保存
      */
     @RequestMapping("/save")
-    //@RequiresPermissions("product:brand:save")
-    public R save(@RequestBody BrandEntity brand){
-		brandService.save(brand);
-
+    public R save(@RequestBody @Valid BrandEntity brand/*, BindingResult result*/){
+/*        if(result.hasErrors()){
+            Map<String,String> map = new HashMap<>();
+            result.getFieldErrors().forEach(t->{
+                map.put(t.getField(),t.getDefaultMessage());
+            });
+            R.error(400,"提交数据不合法").put("data",map);
+        }else {
+            brandService.save(brand);
+        }*/
+        brandService.save(brand);
         return R.ok();
     }
 
