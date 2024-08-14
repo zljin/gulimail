@@ -35,19 +35,21 @@ public class AttrGroupController {
      * 列表
      */
     @RequestMapping("/list")
-    //@RequiresPermissions("product:attrgroup:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = attrGroupService.queryPage(params);
-
         return R.ok().put("page", page);
     }
 
+    @RequestMapping("/list/{catelogId}")
+    public R list(@RequestParam Map<String, Object> params,@PathVariable("catelogId") long catelogId){
+        PageUtils page = attrGroupService.queryPage(params, catelogId);
+        return R.ok().put("page", page);
+    }
 
     /**
      * 信息
      */
     @RequestMapping("/info/{attrGroupId}")
-    //@RequiresPermissions("product:attrgroup:info")
     public R info(@PathVariable("attrGroupId") Long attrGroupId){
 		AttrGroupEntity attrGroup = attrGroupService.getById(attrGroupId);
 
