@@ -1,7 +1,9 @@
 package com.zljin.gulimall.product.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.zljin.gulimall.product.service.CategoryBrandRelationService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -19,10 +21,14 @@ import com.zljin.gulimall.common.utils.Query;
 import com.zljin.gulimall.product.dao.CategoryDao;
 import com.zljin.gulimall.product.entity.CategoryEntity;
 import com.zljin.gulimall.product.service.CategoryService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+    @Autowired
+    private CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -73,6 +79,17 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         findPath(catelogId, path);
         Collections.reverse(path);
         return path.toArray(new Long[path.size()]);
+    }
+
+    /**
+     * 级联更新
+     * @param category
+     */
+    @Transactional
+    @Override
+    public void updateCascade(CategoryEntity category) {
+        this.updateById(category);
+        categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
     }
 
     private void findPath(Long categorygId, List<Long> path) {

@@ -1,6 +1,8 @@
 package com.zljin.gulimall.product.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.zljin.gulimall.product.service.CategoryBrandRelationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -12,10 +14,14 @@ import com.zljin.gulimall.common.utils.Query;
 import com.zljin.gulimall.product.dao.BrandDao;
 import com.zljin.gulimall.product.entity.BrandEntity;
 import com.zljin.gulimall.product.service.BrandService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("brandService")
 public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> implements BrandService {
+
+    @Autowired
+    private CategoryBrandRelationService categoryBrandRelationService;
 
     /**
      * 附带条件的分页查询
@@ -35,6 +41,15 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
         );
 
         return new PageUtils(page);
+    }
+
+    @Transactional
+    @Override
+    public void updateDetail(BrandEntity brand) {
+        this.updateById(brand);
+        if (StrUtil.isNotEmpty(brand.getName())) {
+            categoryBrandRelationService.updateBrand(brand.getBrandId(), brand.getName());
+        }
     }
 
 }
