@@ -30,6 +30,7 @@ public class BrandEntity implements Serializable {
 	private String name;
 	/**
 	 * 品牌logo
+	 * @Leonard 可用oos将具体的图片存储到云端，oos功能略
 	 */
 	private String logo;
 	/**

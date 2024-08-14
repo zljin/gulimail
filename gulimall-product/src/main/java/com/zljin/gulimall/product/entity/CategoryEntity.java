@@ -2,6 +2,7 @@ package com.zljin.gulimall.product.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
@@ -37,7 +38,15 @@ public class CategoryEntity implements Serializable {
 	private Long parentId;
 	/**
 	 * 是否显示[0-不显示，1显示]
+	 * @leonard 用于逻辑删除，
+	 * mybatis-plus @TableLogic 和下面的配置实现
+	 *   global-config:
+	 *     db-config:
+	 *       id-type: auto
+	 *       logic-delete-value: 1 # 逻辑删除
+	 *       logic-not-delete-value: 0
 	 */
+	@TableLogic(value = "1",delval = "0")
 	private Integer status;
 	/**
 	 * 排序

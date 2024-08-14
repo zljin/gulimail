@@ -5,11 +5,7 @@ import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.zljin.gulimall.product.entity.CategoryEntity;
 import com.zljin.gulimall.product.service.CategoryService;
@@ -54,8 +50,7 @@ public class CategoryController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
-    //@RequiresPermissions("product:category:save")
+    @PostMapping("/save")
     public R save(@RequestBody CategoryEntity category){
 		categoryService.save(category);
 
@@ -63,24 +58,31 @@ public class CategoryController {
     }
 
     /**
+     * 批量修改排序顺序
+     * @param categorys
+     * @return
+     */
+    @PutMapping("/update/sort")
+    public R updateSort(@RequestBody CategoryEntity[] categorys){
+        categoryService.updateBatchById(Arrays.asList(categorys));
+        return R.ok();
+    }
+
+    /**
      * 修改
      */
-    @RequestMapping("/update")
-    //@RequiresPermissions("product:category:update")
+    @PutMapping("/update")
     public R update(@RequestBody CategoryEntity category){
 		categoryService.updateById(category);
-
         return R.ok();
     }
 
     /**
      * 删除
      */
-    @RequestMapping("/delete")
-    //@RequiresPermissions("product:category:delete")
+    @DeleteMapping("/delete")
     public R delete(@RequestBody Long[] ids){
-		categoryService.removeByIds(Arrays.asList(ids));
-
+        categoryService.removeMenuByIds(Arrays.asList(ids));
         return R.ok();
     }
 
