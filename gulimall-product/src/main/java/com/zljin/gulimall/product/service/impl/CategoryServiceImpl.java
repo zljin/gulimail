@@ -4,6 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -57,6 +59,27 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         }
         if (flag) {
             baseMapper.deleteBatchIds(ids);
+        }
+    }
+
+    /**
+     * 找到catelogId的完整路径
+     * @param catelogId
+     * @return
+     */
+    @Override
+    public Long[] findCatelogPath(Long catelogId) {
+        List<Long> path = new LinkedList<>();
+        findPath(catelogId, path);
+        Collections.reverse(path);
+        return path.toArray(new Long[path.size()]);
+    }
+
+    private void findPath(Long categorygId, List<Long> path) {
+        if (categorygId != 0) {
+            path.add(categorygId);
+            CategoryEntity byId = getById(categorygId);
+            findPath(byId.getParentCid(), path);
         }
     }
 
