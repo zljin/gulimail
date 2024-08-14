@@ -5,12 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 
+import com.zljin.gulimall.common.valid.AddGroup;
+import com.zljin.gulimall.common.valid.UpdateGroup;
 import lombok.Data;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 
 /**
  * 品牌
@@ -27,12 +26,14 @@ public class BrandEntity implements Serializable {
 	/**
 	 * 品牌id
 	 */
+	@NotNull(message = "修改必须指定品牌id",groups = UpdateGroup.class)
+	@Null(message = "自增主键,新增不能指定id",groups = AddGroup.class)
 	@TableId
 	private Long id;
 	/**
 	 * 品牌名
 	 */
-	@NotBlank(message = "品牌名不能为空")
+	@NotBlank(message = "品牌名不能为空",groups = {AddGroup.class,UpdateGroup.class})
 	private String name;
 	/**
 	 * 品牌logo
@@ -46,14 +47,12 @@ public class BrandEntity implements Serializable {
 	/**
 	 * 检索首字母
 	 */
-	@NotEmpty
-	@Pattern(regexp = "/^[a-zA-Z]$/",message = "检索首字母必须是一个字母")
 	private String firstLetter;
 	/**
 	 * 排序
 	 */
-	@NotEmpty
-	@Min(value = 0,message = "排序必须大于等于0")
+	@NotEmpty(groups = {AddGroup.class})
+	@Min(value = 0,message = "排序必须大于等于0",groups = {AddGroup.class,UpdateGroup.class})
 	private Integer sort;
 	/**
 	 * 备注

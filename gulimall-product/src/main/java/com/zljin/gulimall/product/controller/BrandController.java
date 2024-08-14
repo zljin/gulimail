@@ -2,11 +2,14 @@ package com.zljin.gulimall.product.controller;
 
 import com.zljin.gulimall.common.utils.PageUtils;
 import com.zljin.gulimall.common.utils.R;
+import com.zljin.gulimall.common.valid.AddGroup;
+import com.zljin.gulimall.common.valid.UpdateGroup;
 import com.zljin.gulimall.product.entity.BrandEntity;
 import com.zljin.gulimall.product.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -54,9 +57,14 @@ public class BrandController {
 
     /**
      * 保存
+     *
+     * 注意使用区别
+     * @Validated(AddGroup.class) 只有设置了分组 JSR才会校验
+     * @Valid 不设置分组就能校验
+     *
      */
     @RequestMapping("/save")
-    public R save(@RequestBody @Valid BrandEntity brand/*, BindingResult result*/){
+    public R save(@RequestBody @Validated(AddGroup.class) BrandEntity brand/*, BindingResult result*/){
 /*        if(result.hasErrors()){
             Map<String,String> map = new HashMap<>();
             result.getFieldErrors().forEach(t->{
@@ -75,7 +83,7 @@ public class BrandController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:brand:update")
-    public R update(@RequestBody BrandEntity brand){
+    public R update(@RequestBody @Validated(UpdateGroup.class) BrandEntity brand){
 		brandService.updateById(brand);
 
         return R.ok();
