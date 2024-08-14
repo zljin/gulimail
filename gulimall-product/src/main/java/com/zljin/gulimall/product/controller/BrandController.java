@@ -4,6 +4,7 @@ import com.zljin.gulimall.common.utils.PageUtils;
 import com.zljin.gulimall.common.utils.R;
 import com.zljin.gulimall.common.valid.AddGroup;
 import com.zljin.gulimall.common.valid.UpdateGroup;
+import com.zljin.gulimall.common.valid.UpdateStatusGroup;
 import com.zljin.gulimall.product.entity.BrandEntity;
 import com.zljin.gulimall.product.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,12 @@ public class BrandController {
     public R update(@RequestBody @Validated(UpdateGroup.class) BrandEntity brand){
 		brandService.updateById(brand);
 
+        return R.ok();
+    }
+
+    @RequestMapping("/update/status")
+    public R updateStatus(@RequestBody @Validated(UpdateStatusGroup.class) BrandEntity brand){
+        brandService.updateById(brand);
         return R.ok();
     }
 

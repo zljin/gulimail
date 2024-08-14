@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 
 import com.zljin.gulimall.common.valid.AddGroup;
+import com.zljin.gulimall.common.valid.ListValue;
 import com.zljin.gulimall.common.valid.UpdateGroup;
+import com.zljin.gulimall.common.valid.UpdateStatusGroup;
 import lombok.Data;
 
 import javax.validation.constraints.*;
@@ -42,7 +44,11 @@ public class BrandEntity implements Serializable {
 	private String logo;
 	/**
 	 * 显示状态[0-不显示；1-显示]
+	 *
+	 * 自定义校验
 	 */
+	@NotNull(groups = {AddGroup.class, UpdateStatusGroup.class})
+	@ListValue(vals = {0,1},groups = {AddGroup.class, UpdateStatusGroup.class})
 	private Integer status;
 	/**
 	 * 检索首字母
