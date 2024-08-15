@@ -11,10 +11,12 @@ import java.util.Map;
  *
  * @author leonard
  * @email leoanrd_zou@163.com
- * @date 2024-08-13 07:09:58
+ * @date 2024-08-14 11:49:23
  */
 public interface AttrGroupService extends IService<AttrGroupEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    PageUtils queryPage(Map<String, Object> params, long catelogId);
 }
 

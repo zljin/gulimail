@@ -11,10 +11,12 @@ import java.util.Map;
  *
  * @author leonard
  * @email leoanrd_zou@163.com
- * @date 2024-08-13 07:09:58
+ * @date 2024-08-14 11:49:24
  */
 public interface BrandService extends IService<BrandEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void updateDetail(BrandEntity brand);
 }
 

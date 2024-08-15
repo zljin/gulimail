@@ -12,12 +12,18 @@ import java.util.Map;
  *
  * @author leonard
  * @email leoanrd_zou@163.com
- * @date 2024-08-13 07:09:57
+ * @date 2024-08-14 11:49:23
  */
 public interface CategoryService extends IService<CategoryEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
     List<CategoryEntity> listWithTree();
+
+    void removeMenuByIds(List<Long> ids);
+
+    Long[] findCatelogPath(Long catelogId);
+
+    void updateCascade(CategoryEntity category);
 }
 

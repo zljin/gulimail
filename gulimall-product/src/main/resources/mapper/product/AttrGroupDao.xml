@@ -5,12 +5,12 @@
 
 	<!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.zljin.gulimall.product.entity.AttrGroupEntity" id="attrGroupMap">
-        <result property="id" column="id"/>
-        <result property="name" column="name"/>
+        <result property="attrGroupId" column="attr_group_id"/>
+        <result property="attrGroupName" column="attr_group_name"/>
         <result property="sort" column="sort"/>
+        <result property="descript" column="descript"/>
         <result property="icon" column="icon"/>
-        <result property="categoryId" column="category_id"/>
-        <result property="remark" column="remark"/>
+        <result property="catelogId" column="catelog_id"/>
     </resultMap>
 
 
