@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +28,7 @@ import com.zljin.gulimall.common.utils.R;
  * @email leoanrd_zou@163.com
  * @date 2024-08-15 21:11:19
  */
+@Api(tags = "商品库存")
 @RestController
 @RequestMapping("ware/waresku")
 public class WareSkuController {
@@ -34,8 +38,9 @@ public class WareSkuController {
     /**
      * 列表
      */
+    @ApiImplicitParam(name = "params")
+    @ApiOperation(value = "查询商品库存")
     @RequestMapping("/list")
-    //@RequiresPermissions("ware:waresku:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = wareSkuService.queryPage(params);
 

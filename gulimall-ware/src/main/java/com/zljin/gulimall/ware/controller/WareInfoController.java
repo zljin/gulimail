@@ -28,7 +28,7 @@ import com.zljin.gulimall.common.utils.R;
  * @email leoanrd_zou@163.com
  * @date 2024-08-15 21:11:20
  */
-@Api(tags = "仓库信息模块")
+@Api(tags = "仓库信息")
 @RestController
 @RequestMapping("ware/wareinfo")
 public class WareInfoController {
