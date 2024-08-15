@@ -1,6 +1,6 @@
 ## gulimall-product
 
-
+### note 
 1、整合MyBatis-Plus
      1）、导入依赖
      <dependency>
@@ -100,6 +100,21 @@
          ->想改缓存的配置，只需要给容器中放一个RedisCacheConfiguration即可
          ->就会应用到当前RedisCacheManager管理的所有缓存分区中
 
+### 所有传map的入参请参考如下
 
+```json
+{
+  "page": "1",
+  //当前页码
+  "limit": "10",
+  //每页记录数
+  "sidx": 'id',
+  //排序字段
+  "order": "desc",
+  //排序方式
+  "key": "huawei"
+  //检索关键字
+}
+```
 
 
