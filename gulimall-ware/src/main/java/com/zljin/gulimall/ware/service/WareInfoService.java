@@ -2,7 +2,7 @@ package com.zljin.gulimall.ware.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zljin.gulimall.common.utils.PageUtils;
-import com.zljin.gulimall.ware.entity.WareEntity;
+import com.zljin.gulimall.ware.entity.WareInfoEntity;
 
 import java.util.Map;
 
@@ -13,7 +13,7 @@ import java.util.Map;
  * @email leoanrd_zou@163.com
  * @date 2024-08-15 21:11:20
  */
-public interface WareService extends IService<WareEntity> {
+public interface WareInfoService extends IService<WareInfoEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 }

@@ -8,15 +8,15 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 库存工作单
+ * 仓库信息
  * 
  * @author leonard
  * @email leoanrd_zou@163.com
- * @date 2024-08-13 09:38:34
+ * @date 2024-08-15 21:11:20
  */
 @Data
-@TableName("wms_ware_order_bill_detail")
-public class WareOrderBillDetailEntity implements Serializable {
+@TableName("wms_ware_info")
+public class WareInfoEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -25,20 +25,16 @@ public class WareOrderBillDetailEntity implements Serializable {
 	@TableId
 	private Long id;
 	/**
-	 * sku_id
+	 * 仓库名
 	 */
-	private Long skuId;
+	private String name;
 	/**
-	 * sku_name
+	 * 仓库地址
 	 */
-	private String skuName;
+	private String address;
 	/**
-	 * 购买个数
+	 * 区域编码
 	 */
-	private Integer skuNum;
-	/**
-	 * 工作单id
-	 */
-	private Long taskId;
+	private String areacode;
 
 }
