@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zljin.gulimall.ware.entity.WareEntity;
-import com.zljin.gulimall.ware.service.WareService;
+import com.zljin.gulimall.ware.entity.WareInfoEntity;
+import com.zljin.gulimall.ware.service.WareInfoService;
 import com.zljin.gulimall.common.utils.PageUtils;
 import com.zljin.gulimall.common.utils.R;
 
@@ -23,21 +26,23 @@ import com.zljin.gulimall.common.utils.R;
  *
  * @author leonard
  * @email leoanrd_zou@163.com
- * @date 2024-08-13 09:38:33
+ * @date 2024-08-15 21:11:20
  */
+@Api(tags = "仓库信息")
 @RestController
-@RequestMapping("ware/ware")
-public class WareController {
+@RequestMapping("ware/wareinfo")
+public class WareInfoController {
     @Autowired
-    private WareService wareService;
+    private WareInfoService wareInfoService;
 
     /**
      * 列表
      */
+    @ApiImplicitParam(name = "params")
+    @ApiOperation(value = "仓库信息列表")
     @RequestMapping("/list")
-    //@RequiresPermissions("ware:ware:list")
     public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = wareService.queryPage(params);
+        PageUtils page = wareInfoService.queryPage(params);
 
         return R.ok().put("page", page);
     }
@@ -47,20 +52,20 @@ public class WareController {
      * 信息
      */
     @RequestMapping("/info/{id}")
-    //@RequiresPermissions("ware:ware:info")
+    //@RequiresPermissions("ware:wareinfo:info")
     public R info(@PathVariable("id") Long id){
-		WareEntity ware = wareService.getById(id);
+		WareInfoEntity wareInfo = wareInfoService.getById(id);
 
-        return R.ok().put("ware", ware);
+        return R.ok().put("wareInfo", wareInfo);
     }
 
     /**
      * 保存
      */
     @RequestMapping("/save")
-    //@RequiresPermissions("ware:ware:save")
-    public R save(@RequestBody WareEntity ware){
-		wareService.save(ware);
+    //@RequiresPermissions("ware:wareinfo:save")
+    public R save(@RequestBody WareInfoEntity wareInfo){
+		wareInfoService.save(wareInfo);
 
         return R.ok();
     }
@@ -69,9 +74,9 @@ public class WareController {
      * 修改
      */
     @RequestMapping("/update")
-    //@RequiresPermissions("ware:ware:update")
-    public R update(@RequestBody WareEntity ware){
-		wareService.updateById(ware);
+    //@RequiresPermissions("ware:wareinfo:update")
+    public R update(@RequestBody WareInfoEntity wareInfo){
+		wareInfoService.updateById(wareInfo);
 
         return R.ok();
     }
@@ -80,9 +85,9 @@ public class WareController {
      * 删除
      */
     @RequestMapping("/delete")
-    //@RequiresPermissions("ware:ware:delete")
+    //@RequiresPermissions("ware:wareinfo:delete")
     public R delete(@RequestBody Long[] ids){
-		wareService.removeByIds(Arrays.asList(ids));
+		wareInfoService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zljin.gulimall.ware.entity.WareOrderBillDetailEntity;
-import com.zljin.gulimall.ware.service.WareOrderBillDetailService;
+import com.zljin.gulimall.ware.entity.WareOrderTaskDetailEntity;
+import com.zljin.gulimall.ware.service.WareOrderTaskDetailService;
 import com.zljin.gulimall.common.utils.PageUtils;
 import com.zljin.gulimall.common.utils.R;
 
@@ -23,21 +23,21 @@ import com.zljin.gulimall.common.utils.R;
  *
  * @author leonard
  * @email leoanrd_zou@163.com
- * @date 2024-08-13 09:38:34
+ * @date 2024-08-15 21:11:20
  */
 @RestController
-@RequestMapping("ware/wareorderbilldetail")
-public class WareOrderBillDetailController {
+@RequestMapping("ware/wareordertaskdetail")
+public class WareOrderTaskDetailController {
     @Autowired
-    private WareOrderBillDetailService wareOrderBillDetailService;
+    private WareOrderTaskDetailService wareOrderTaskDetailService;
 
     /**
      * 列表
      */
     @RequestMapping("/list")
-    //@RequiresPermissions("ware:wareorderbilldetail:list")
+    //@RequiresPermissions("ware:wareordertaskdetail:list")
     public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = wareOrderBillDetailService.queryPage(params);
+        PageUtils page = wareOrderTaskDetailService.queryPage(params);
 
         return R.ok().put("page", page);
     }
@@ -47,20 +47,20 @@ public class WareOrderBillDetailController {
      * 信息
      */
     @RequestMapping("/info/{id}")
-    //@RequiresPermissions("ware:wareorderbilldetail:info")
+    //@RequiresPermissions("ware:wareordertaskdetail:info")
     public R info(@PathVariable("id") Long id){
-		WareOrderBillDetailEntity wareOrderBillDetail = wareOrderBillDetailService.getById(id);
+		WareOrderTaskDetailEntity wareOrderTaskDetail = wareOrderTaskDetailService.getById(id);
 
-        return R.ok().put("wareOrderBillDetail", wareOrderBillDetail);
+        return R.ok().put("wareOrderTaskDetail", wareOrderTaskDetail);
     }
 
     /**
      * 保存
      */
     @RequestMapping("/save")
-    //@RequiresPermissions("ware:wareorderbilldetail:save")
-    public R save(@RequestBody WareOrderBillDetailEntity wareOrderBillDetail){
-		wareOrderBillDetailService.save(wareOrderBillDetail);
+    //@RequiresPermissions("ware:wareordertaskdetail:save")
+    public R save(@RequestBody WareOrderTaskDetailEntity wareOrderTaskDetail){
+		wareOrderTaskDetailService.save(wareOrderTaskDetail);
 
         return R.ok();
     }
@@ -69,9 +69,9 @@ public class WareOrderBillDetailController {
      * 修改
      */
     @RequestMapping("/update")
-    //@RequiresPermissions("ware:wareorderbilldetail:update")
-    public R update(@RequestBody WareOrderBillDetailEntity wareOrderBillDetail){
-		wareOrderBillDetailService.updateById(wareOrderBillDetail);
+    //@RequiresPermissions("ware:wareordertaskdetail:update")
+    public R update(@RequestBody WareOrderTaskDetailEntity wareOrderTaskDetail){
+		wareOrderTaskDetailService.updateById(wareOrderTaskDetail);
 
         return R.ok();
     }
@@ -80,9 +80,9 @@ public class WareOrderBillDetailController {
      * 删除
      */
     @RequestMapping("/delete")
-    //@RequiresPermissions("ware:wareorderbilldetail:delete")
+    //@RequiresPermissions("ware:wareordertaskdetail:delete")
     public R delete(@RequestBody Long[] ids){
-		wareOrderBillDetailService.removeByIds(Arrays.asList(ids));
+		wareOrderTaskDetailService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

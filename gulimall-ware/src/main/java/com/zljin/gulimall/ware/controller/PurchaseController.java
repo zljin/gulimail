@@ -1,15 +1,17 @@
 package com.zljin.gulimall.ware.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.zljin.gulimall.ware.vo.MergeVo;
+import com.zljin.gulimall.ware.vo.PurchaseDoneVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.zljin.gulimall.ware.entity.PurchaseEntity;
 import com.zljin.gulimall.ware.service.PurchaseService;
@@ -23,13 +25,52 @@ import com.zljin.gulimall.common.utils.R;
  *
  * @author leonard
  * @email leoanrd_zou@163.com
- * @date 2024-08-13 09:38:33
+ * @date 2024-08-15 21:11:20
  */
+@Api(tags = "采购信息")
 @RestController
 @RequestMapping("ware/purchase")
 public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;
+
+
+    @ApiImplicitParam(name = "params")
+    @ApiOperation(value = "查询未领取的采购单")
+    @RequestMapping("/unreceive/list")
+    public R unreceivelist(@RequestParam Map<String, Object> params){
+        PageUtils page = purchaseService.queryPageUnreceivePurchase(params);
+        return R.ok().put("page", page);
+    }
+
+    @ApiImplicitParam(name = "mergeVo")
+    @ApiOperation(value = "合并的采购单")
+    @PostMapping("/merge")
+    public R merge(@RequestBody MergeVo mergeVo){
+        purchaseService.mergePurchase(mergeVo);
+        return R.ok();
+    }
+
+    /**
+     * 领取采购单
+     * @return
+     */
+    @ApiImplicitParam(name = "ids")
+    @ApiOperation(value = "领取采购单")
+    @PostMapping("/received")
+    public R received(@RequestBody List<Long> ids){
+        purchaseService.received(ids);
+        return R.ok();
+    }
+
+    @ApiImplicitParam(name = "doneVo")
+    @ApiOperation(value = "完成采购")
+    @PostMapping("/done")
+    public R finish(@RequestBody PurchaseDoneVo doneVo){
+        purchaseService.done(doneVo);
+        return R.ok();
+    }
+
 
     /**
      * 列表

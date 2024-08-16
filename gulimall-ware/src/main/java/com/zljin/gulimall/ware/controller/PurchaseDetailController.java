@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,12 +22,13 @@ import com.zljin.gulimall.common.utils.R;
 
 
 /**
- * 
+ * 采购详情
  *
  * @author leonard
  * @email leoanrd_zou@163.com
- * @date 2024-08-13 09:38:33
+ * @date 2024-08-15 21:11:20
  */
+@Api(tags = "采购详情")
 @RestController
 @RequestMapping("ware/purchasedetail")
 public class PurchaseDetailController {
@@ -34,8 +38,9 @@ public class PurchaseDetailController {
     /**
      * 列表
      */
+    @ApiImplicitParam(name = "params")
+    @ApiOperation(value = "采购详情列表")
     @RequestMapping("/list")
-    //@RequiresPermissions("ware:purchasedetail:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = purchaseDetailService.queryPage(params);
 
@@ -57,6 +62,8 @@ public class PurchaseDetailController {
     /**
      * 保存
      */
+    @ApiImplicitParam(name = "purchaseDetail")
+    @ApiOperation(value = "创建采购需求")
     @RequestMapping("/save")
     //@RequiresPermissions("ware:purchasedetail:save")
     public R save(@RequestBody PurchaseDetailEntity purchaseDetail){

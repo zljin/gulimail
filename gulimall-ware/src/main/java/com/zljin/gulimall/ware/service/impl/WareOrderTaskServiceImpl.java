@@ -8,19 +8,19 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zljin.gulimall.common.utils.PageUtils;
 import com.zljin.gulimall.common.utils.Query;
 
-import com.zljin.gulimall.ware.dao.WareOrderBillDao;
-import com.zljin.gulimall.ware.entity.WareOrderBillEntity;
-import com.zljin.gulimall.ware.service.WareOrderBillService;
+import com.zljin.gulimall.ware.dao.WareOrderTaskDao;
+import com.zljin.gulimall.ware.entity.WareOrderTaskEntity;
+import com.zljin.gulimall.ware.service.WareOrderTaskService;
 
 
-@Service("wareOrderBillService")
-public class WareOrderBillServiceImpl extends ServiceImpl<WareOrderBillDao, WareOrderBillEntity> implements WareOrderBillService {
+@Service("wareOrderTaskService")
+public class WareOrderTaskServiceImpl extends ServiceImpl<WareOrderTaskDao, WareOrderTaskEntity> implements WareOrderTaskService {
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<WareOrderBillEntity> page = this.page(
-                new Query<WareOrderBillEntity>().getPage(params),
-                new QueryWrapper<WareOrderBillEntity>()
+        IPage<WareOrderTaskEntity> page = this.page(
+                new Query<WareOrderTaskEntity>().getPage(params),
+                new QueryWrapper<WareOrderTaskEntity>()
         );
 
         return new PageUtils(page);

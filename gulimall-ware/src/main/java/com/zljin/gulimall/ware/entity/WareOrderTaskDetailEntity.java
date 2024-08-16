@@ -12,11 +12,11 @@ import lombok.Data;
  * 
  * @author leonard
  * @email leoanrd_zou@163.com
- * @date 2024-08-13 09:38:34
+ * @date 2024-08-15 21:11:20
  */
 @Data
-@TableName("wms_ware_order_bill_detail")
-public class WareOrderBillDetailEntity implements Serializable {
+@TableName("wms_ware_order_task_detail")
+public class WareOrderTaskDetailEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -40,5 +40,13 @@ public class WareOrderBillDetailEntity implements Serializable {
 	 * 工作单id
 	 */
 	private Long taskId;
+	/**
+	 * 仓库id
+	 */
+	private Long wareId;
+	/**
+	 * 1-已锁定  2-已解锁  3-扣减
+	 */
+	private Integer lockStatus;
 
 }
