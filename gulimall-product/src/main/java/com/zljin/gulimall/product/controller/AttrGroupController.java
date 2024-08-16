@@ -6,6 +6,7 @@ import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.zljin.gulimall.product.entity.AttrEntity;
+import com.zljin.gulimall.product.service.AttrAttrgroupRelationService;
 import com.zljin.gulimall.product.service.AttrService;
 import com.zljin.gulimall.product.service.CategoryService;
 import com.zljin.gulimall.product.vo.AttrGroupRelationVo;
@@ -38,6 +39,21 @@ public class AttrGroupController {
     @Autowired
     private AttrService attrService;
 
+    @Autowired
+    private AttrAttrgroupRelationService relationService;
+
+
+    /**
+     * 添加分组id和基本属性的关联关系
+     * @param vos
+     * @return
+     */
+    @PostMapping("/attr/relation")
+    public R addRelation(@RequestBody List<AttrGroupRelationVo> vos){
+        relationService.saveBatch(vos);
+        return R.ok();
+    }
+
 
     /**
      * 根据分组id查找关联的所有基本属性
@@ -47,6 +63,19 @@ public class AttrGroupController {
     public R attrRelation(@PathVariable("attrgroupId") Long attrgroupId){
         List<AttrEntity> entities =  attrService.getRelationAttr(attrgroupId);
         return R.ok().put("data",entities);
+    }
+
+    /**
+     * 根据分组id查找未关联的所有基本属性
+     * @param attrgroupId
+     * @param params
+     * @return
+     */
+    @GetMapping("/{attrgroupId}/noattr/relation")
+    public R attrNoRelation(@PathVariable("attrgroupId") Long attrgroupId,
+                            @RequestParam Map<String, Object> params){
+        PageUtils page = attrService.getNoRelationAttr(params,attrgroupId);
+        return R.ok().put("page",page);
     }
 
     /**
