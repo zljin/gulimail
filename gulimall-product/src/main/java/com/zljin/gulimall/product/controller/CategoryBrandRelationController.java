@@ -3,9 +3,12 @@ package com.zljin.gulimall.product.controller;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zljin.gulimall.product.entity.BrandEntity;
+import com.zljin.gulimall.product.vo.BrandVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +33,29 @@ public class CategoryBrandRelationController {
     private CategoryBrandRelationService categoryBrandRelationService;
 
     /**
+     * 获取分类关联的品牌
+     *
+     * 就是手机分类 查出有华为，小米，苹果的品牌
+     * @param catId
+     * @return
+     */
+    @GetMapping("/brands/list")
+    public R relationBrandsList(@RequestParam(value = "catId",required = true)Long catId){
+        List<BrandEntity> vos = categoryBrandRelationService.getBrandsByCatId(catId);
+
+        List<BrandVo> collect = vos.stream().map(item -> {
+            BrandVo brandVo = new BrandVo();
+            brandVo.setBrandId(item.getBrandId());
+            brandVo.setBrandName(item.getName());
+
+            return brandVo;
+        }).collect(Collectors.toList());
+
+        return R.ok().put("data",collect);
+
+    }
+
+    /**
      * 列表
      */
     @RequestMapping("/list")
@@ -40,6 +66,9 @@ public class CategoryBrandRelationController {
         return R.ok().put("page", page);
     }
 
+    /**
+     * 获取当前品牌关联的所有分类列表
+     */
     @GetMapping("catelog/list")
     public R cateloglist(@RequestParam Long brandId){
         QueryWrapper<CategoryBrandRelationEntity> queryWrapper = new QueryWrapper<>();
