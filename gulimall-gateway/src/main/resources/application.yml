@@ -2,14 +2,6 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: bilibili_route
-          uri: https://www.bilibili.com
-          predicates:
-            - Query=url,biliblli
-        - id: qq_route
-          uri: https://www.qq.com
-          predicates:
-            - Query=url,qq
         - id: gulimall-product
           uri: lb://gulimall-product
           predicates:
@@ -32,6 +24,12 @@ spring:
           uri: lb://gulimall-ware
           predicates:
             - Path=/api/ware/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        - id: gulimall-order
+          uri: lb://gulimall-order
+          predicates:
+            - Path=/api/order/**
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
     nacos:
