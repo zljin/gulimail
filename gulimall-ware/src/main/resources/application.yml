@@ -17,6 +17,8 @@ spring:
           enabled: false
   application:
     name: gulimall-ware
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
