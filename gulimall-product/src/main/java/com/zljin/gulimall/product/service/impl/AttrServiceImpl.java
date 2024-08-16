@@ -1,6 +1,7 @@
 package com.zljin.gulimall.product.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zljin.gulimall.common.constant.ProductConstant;
@@ -11,11 +12,14 @@ import com.zljin.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import com.zljin.gulimall.product.entity.AttrGroupEntity;
 import com.zljin.gulimall.product.entity.CategoryEntity;
 import com.zljin.gulimall.product.service.CategoryService;
+import com.zljin.gulimall.product.vo.AttrGroupRelationVo;
 import com.zljin.gulimall.product.vo.AttrRespVo;
 import com.zljin.gulimall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -175,6 +179,36 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
                 relationDao.insert(relationEntity);
             }
         }
+    }
+
+    /**
+     * 根据分组id查找关联的所有基本属性
+     * @param attrgroupId
+     * @return
+     */
+    @Override
+    public List<AttrEntity> getRelationAttr(Long attrgroupId) {
+        List<AttrAttrgroupRelationEntity> entities = relationDao.selectList(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_group_id", attrgroupId));
+        List<Long> attrIds = entities.stream().map((attr) -> attr.getAttrId()).collect(Collectors.toList());
+        if(CollectionUtil.isEmpty(attrIds)){
+            return null;
+        }
+        Collection<AttrEntity> attrEntities = this.listByIds(attrIds);
+        return (List<AttrEntity>) attrEntities;
+    }
+
+    /**
+     * 删除某一个分组id下的某一个基本属性，可以批量删除
+     * @param vos
+     */
+    @Override
+    public void deleteRelation(AttrGroupRelationVo[] vos) {
+        List<AttrAttrgroupRelationEntity> entities = Arrays.asList(vos).stream().map((item) -> {
+            AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
+            BeanUtil.copyProperties(item, relationEntity);
+            return relationEntity;
+        }).collect(Collectors.toList());
+        relationDao.deleteBatchRelation(entities);
     }
 
 
