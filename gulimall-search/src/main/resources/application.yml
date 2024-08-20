@@ -1,0 +1,19 @@
+server:
+  port: 11116
+
+spring:
+  elasticsearch:
+    rest:
+      uris: 127.0.0.1:9200
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        import-check:
+          enabled: false
+  application:
+    name: gulimall-search
