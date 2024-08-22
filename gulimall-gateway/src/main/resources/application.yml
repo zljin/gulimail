@@ -32,6 +32,11 @@ spring:
             - Path=/api/order/**
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
+        # 满足某域名转发对应服务，将会被nginx反向代理
+        - id: gulimall_host_route
+          uri: lb://gulimall-product
+          predicates:
+            - Host=**.gulimall.com
     nacos:
       username: nacos
       password: nacos
