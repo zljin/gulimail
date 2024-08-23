@@ -36,7 +36,7 @@ spring:
         - id: gulimall_host_route
           uri: lb://gulimall-product
           predicates:
-            - Host=**.gulimall.com
+            - Host=**.zljin-mall
     nacos:
       username: nacos
       password: nacos
