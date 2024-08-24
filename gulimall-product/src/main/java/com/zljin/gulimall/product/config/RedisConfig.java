@@ -1,4 +1,4 @@
-package com.zljin.config;
+package com.zljin.gulimall.product.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -10,12 +10,15 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+/**
+ * 参照 RedisAutoConfiguration，我们自定义一个RedisTemplate
+ */
 
 @Configuration
 public class RedisConfig {
     @Bean(name = "customRedisTemplate")
     @SuppressWarnings("all")
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
+    public RedisTemplate<String, Object> customRedisTemplate(RedisConnectionFactory factory) {
         // 我们为了自己开发方便，一般直接使用 <String, Object>
         RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
         template.setConnectionFactory(factory);

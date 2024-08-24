@@ -1,28 +1,30 @@
 package com.zljin.gulimall.product.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.zljin.gulimall.product.service.CategoryBrandRelationService;
-import com.zljin.gulimall.product.vo.Catelog2Vo;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import cn.hutool.core.lang.TypeReference;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zljin.gulimall.common.utils.PageUtils;
 import com.zljin.gulimall.common.utils.Query;
-
 import com.zljin.gulimall.product.dao.CategoryDao;
 import com.zljin.gulimall.product.entity.CategoryEntity;
+import com.zljin.gulimall.product.service.CategoryBrandRelationService;
 import com.zljin.gulimall.product.service.CategoryService;
+import com.zljin.gulimall.product.vo.Catelog2Vo;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service("categoryService")
@@ -30,6 +32,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -98,8 +103,51 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
     }
 
+    /**
+     * 1、空结果缓存：解决缓存穿透
+     * 2、设置过期时间（加随机值）：解决缓存雪崩
+     * 3、加锁：解决缓存击穿
+     * @return
+     */
     @Override
     public Map<String, List<Catelog2Vo>> getCatalogJson() {
+        String catalogJSON = stringRedisTemplate.opsForValue().get("catalogJSON");
+        if(StrUtil.isNotEmpty(catalogJSON)){
+            return JSONUtil.toBean(catalogJSON, new TypeReference<Map<String, List<Catelog2Vo>>>() {}, true);
+        }
+        return getCatalogJsonFromDbWithRedisLock();
+    }
+
+    /**
+     * redis setnx 分布式加锁
+     * @return
+     */
+    private Map<String, List<Catelog2Vo>> getCatalogJsonFromDbWithRedisLock() {
+        String uuid = UUID.randomUUID().toString();
+        Boolean lock = stringRedisTemplate.opsForValue().setIfAbsent("lock", uuid, 300, TimeUnit.SECONDS);
+        if (lock) {
+            //加锁操作
+            Map<String, List<Catelog2Vo>> dataFromDb;
+            try {
+                dataFromDb = getDataFromDb();
+                stringRedisTemplate.opsForValue().set("catalogJSON", JSONUtil.toJsonStr(dataFromDb), 1, TimeUnit.DAYS);
+            } finally {
+                //释放锁
+                String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+                Long lock1 = stringRedisTemplate.execute(new DefaultRedisScript<>(script, Long.class)
+                        , Arrays.asList("lock"), uuid);
+            }
+            return dataFromDb;
+        }
+        //如果加锁失败，自旋的方式休眠200ms重试
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+        }
+        return getCatalogJsonFromDbWithRedisLock();//自旋的方式
+    }
+
+    private Map<String, List<Catelog2Vo>> getDataFromDb(){
         List<CategoryEntity> selectList = baseMapper.selectList(null);
         List<CategoryEntity> level1Categorys = getParentCid(selectList, 0L);
         //2、封装数据
