@@ -1,5 +1,12 @@
 ## gulimall-product
 
+### 优化方案
+
+1. 调整jvm: 将新生代调大，减少full gc
+> -Xmx1024m -Xms1024m -Xmn512m
+
+2. 加缓存如redis
+
 ### note 
 1、整合MyBatis-Plus
      1）、导入依赖
