@@ -20,7 +20,10 @@ spring:
 server:
   port: 11117
 
-# 开启com.zljin.gulimall目录下的debug level日志
-logging:
-  level:
-    com.zljin.gulimall: debug
+oauth:
+  github:
+    clientId: Ov23li874WQS0ndohc8Y
+    clientSecret: NWRkMDgwMDJhMmI3YzVlNTZjZjUxODEyN2YzMjFlMjRmZGFiYWQ2OQ==
+    redirectUrl: http://auth.gulimall.com/oauth2.0/github/success
+    oauth2SuccessUrl: https://github.com/login/oauth/access_token?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&code=CODE&redirect_uri=CALLBACK
+    oauthOpenApiUrl1: https://api.github.com/user

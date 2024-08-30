@@ -6,9 +6,12 @@ import com.zljin.gulimall.member.exception.PhoneExsitException;
 import com.zljin.gulimall.member.exception.UsernameExistException;
 import com.zljin.gulimall.member.vo.MemberLoginVo;
 import com.zljin.gulimall.member.vo.MemberRegistVo;
+import com.zljin.gulimall.member.vo.SocialUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -87,6 +90,22 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
                 return null;
             }
         }
+    }
+
+    @Override
+    public MemberEntity login(SocialUser socialUser) {
+        //登录和注册合并逻辑
+        String uid = socialUser.getUid();
+        //1、判断当前社交用户是否已经登录过系统；
+        MemberEntity memberEntity = this.baseMapper.selectOne(new QueryWrapper<MemberEntity>().eq("social_uid", uid));
+        if (memberEntity == null) {
+            MemberEntity regist = new MemberEntity();
+            regist.setUsername(socialUser.getIsRealName());
+            regist.setSocialUid(socialUser.getUid());
+            this.baseMapper.insert(regist);
+            return regist;
+        }
+        return memberEntity;
     }
 
     @Override

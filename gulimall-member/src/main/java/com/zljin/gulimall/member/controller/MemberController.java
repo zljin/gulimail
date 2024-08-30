@@ -10,6 +10,7 @@ import com.zljin.gulimall.member.exception.UsernameExistException;
 import com.zljin.gulimall.member.feign.CouponFeignService;
 import com.zljin.gulimall.member.vo.MemberLoginVo;
 import com.zljin.gulimall.member.vo.MemberRegistVo;
+import com.zljin.gulimall.member.vo.SocialUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,19 @@ public class MemberController {
 
     @Autowired
     CouponFeignService couponFeignService;
+
+
+    @PostMapping("/oauth2/login")
+    public R oauthlogin(@RequestBody SocialUser socialUser) throws Exception {
+
+        MemberEntity entity =  memberService.login(socialUser);
+        if(entity!=null){
+            return R.ok().setData(entity);
+        }else{
+            return R.error(BizCodeEnum.LOGINACCT_PASSWORD_EXCEPTION.getCode(),BizCodeEnum.LOGINACCT_PASSWORD_EXCEPTION.getMsg());
+        }
+    }
+
 
     @PostMapping("/regist")
     public R regist(@RequestBody MemberRegistVo vo){
