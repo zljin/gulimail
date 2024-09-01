@@ -48,7 +48,6 @@ public class CartController {
     public String checkItem(@RequestParam("skuId") Long skuId,
                             @RequestParam("check") Integer check){
         cartService.checkItem(skuId,check);
-
         return "redirect:http://cart.gulimall.com/cart.html";
     }
 
@@ -87,7 +86,6 @@ public class CartController {
 
 
         cartService.addToCart(skuId,num);
-//        model.addAttribute("skuId",skuId);
         ra.addAttribute("skuId",skuId);
         return "redirect:http://cart.gulimall.com/addToCartSuccess.html";
     }
