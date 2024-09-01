@@ -1,0 +1,35 @@
+spring:
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        import-check:
+          enabled: false
+  application:
+    name: gulimall-auth
+  thymeleaf:
+    cache: false
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+  session:
+    store-type: redis
+
+server:
+  port: 11117
+  servlet:
+    session:
+      timeout: 30m
+
+oauth:
+  github:
+    clientId: Ov23li874WQS0ndohc8Y
+    clientSecret: NWRkMDgwMDJhMmI3YzVlNTZjZjUxODEyN2YzMjFlMjRmZGFiYWQ2OQ==
+    redirectUrl: http://auth.gulimall.com/oauth2.0/github/success
+    oauth2SuccessUrl: https://github.com/login/oauth/access_token?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&code=CODE&redirect_uri=CALLBACK
+    oauthOpenApiUrl1: https://api.github.com/user

@@ -4,7 +4,13 @@ import java.util.Arrays;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.zljin.gulimall.common.exception.BizCodeEnum;
+import com.zljin.gulimall.member.exception.PhoneExsitException;
+import com.zljin.gulimall.member.exception.UsernameExistException;
 import com.zljin.gulimall.member.feign.CouponFeignService;
+import com.zljin.gulimall.member.vo.MemberLoginVo;
+import com.zljin.gulimall.member.vo.MemberRegistVo;
+import com.zljin.gulimall.member.vo.SocialUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +36,44 @@ public class MemberController {
 
     @Autowired
     CouponFeignService couponFeignService;
+
+
+    @PostMapping("/oauth2/login")
+    public R oauthlogin(@RequestBody SocialUser socialUser) throws Exception {
+
+        MemberEntity entity =  memberService.login(socialUser);
+        if(entity!=null){
+            return R.ok().setData(entity);
+        }else{
+            return R.error(BizCodeEnum.LOGINACCT_PASSWORD_EXCEPTION.getCode(),BizCodeEnum.LOGINACCT_PASSWORD_EXCEPTION.getMsg());
+        }
+    }
+
+
+    @PostMapping("/regist")
+    public R regist(@RequestBody MemberRegistVo vo){
+
+        try{
+            memberService.regist(vo);
+        }catch (PhoneExsitException e){
+            return R.error(BizCodeEnum.PHONE_EXIST_EXCEPTION.getCode(),BizCodeEnum.PHONE_EXIST_EXCEPTION.getMsg());
+        }catch (UsernameExistException e){
+            return R.error(BizCodeEnum.USER_EXIST_EXCEPTION.getCode(),BizCodeEnum.USER_EXIST_EXCEPTION.getMsg());
+        }
+
+        return R.ok();
+    }
+
+    @PostMapping("/login")
+    public R login(@RequestBody MemberLoginVo vo){
+
+        MemberEntity entity =  memberService.login(vo);
+        if(entity!=null){
+            return R.ok().setData(entity);
+        }else{
+            return R.error(BizCodeEnum.LOGINACCT_PASSWORD_EXCEPTION.getCode(),BizCodeEnum.LOGINACCT_PASSWORD_EXCEPTION.getMsg());
+        }
+    }
 
     @GetMapping("/coupons")
     public R getCoupons(){

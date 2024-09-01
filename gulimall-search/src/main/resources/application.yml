@@ -1,0 +1,29 @@
+server:
+  port: 11116
+
+spring:
+  elasticsearch:
+    rest:
+      uris: 127.0.0.1:9200
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+  session:
+    store-type: redis
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  thymeleaf:
+    cache: false
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        import-check:
+          enabled: false
+  application:
+    name: gulimall-search

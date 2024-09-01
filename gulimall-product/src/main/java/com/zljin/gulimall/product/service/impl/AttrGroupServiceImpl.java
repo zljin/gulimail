@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.zljin.gulimall.product.entity.AttrEntity;
 import com.zljin.gulimall.product.service.AttrService;
 import com.zljin.gulimall.product.vo.AttrGroupWithAttrsVo;
+import com.zljin.gulimall.product.vo.SpuItemAttrGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -85,6 +86,11 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
             attrsVo.setAttrs(attrs);
             return attrsVo;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SpuItemAttrGroupVo> getAttrGroupWithAttrsBySpuId(Long spuId, Long catalogId) {
+        return this.getBaseMapper().getAttrGroupWithAttrsBySpuId(spuId,catalogId);
     }
 
 }
