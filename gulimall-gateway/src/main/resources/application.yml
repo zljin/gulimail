@@ -41,6 +41,10 @@ spring:
           uri: lb://gulimall-auth
           predicates:
             - Host=auth.gulimall.com
+        - id: gulimall_search_route
+          uri: lb://gulimall-search
+          predicates:
+            - Host=search.gulimall.com
     nacos:
       username: nacos
       password: nacos
