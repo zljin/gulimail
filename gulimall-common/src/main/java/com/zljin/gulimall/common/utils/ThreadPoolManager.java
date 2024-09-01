@@ -1,4 +1,4 @@
-package com.zljin.gulimall.product.utils;
+package com.zljin.gulimall.common.utils;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;

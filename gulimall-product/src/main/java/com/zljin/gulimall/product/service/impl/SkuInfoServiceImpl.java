@@ -11,7 +11,7 @@ import com.zljin.gulimall.product.entity.SkuImagesEntity;
 import com.zljin.gulimall.product.entity.SkuInfoEntity;
 import com.zljin.gulimall.product.entity.SpuInfoDescEntity;
 import com.zljin.gulimall.product.service.*;
-import com.zljin.gulimall.product.utils.ThreadPoolManager;
+import com.zljin.gulimall.common.utils.ThreadPoolManager;
 import com.zljin.gulimall.product.vo.SkuItemSaleAttrVo;
 import com.zljin.gulimall.product.vo.SkuItemVo;
 import com.zljin.gulimall.product.vo.SpuItemAttrGroupVo;
