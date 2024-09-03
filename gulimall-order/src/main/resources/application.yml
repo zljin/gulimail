@@ -32,6 +32,12 @@ spring:
     port: 5672
     username: guest
     password: guest
+    publisher-returns: true # 消息正确抵达队列进行回调
+    template:
+      mandatory: true  # 强制要求消息必须被路由到一个队列。如果消息无法路由，会触发一个回调，通常用于处理无法投递的消息
+    listener:
+      simple:
+        acknowledge-mode: manual # 手动签收
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
