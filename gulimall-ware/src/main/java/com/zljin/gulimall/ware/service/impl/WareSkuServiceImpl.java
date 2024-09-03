@@ -2,25 +2,26 @@ package com.zljin.gulimall.ware.service.impl;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zljin.gulimall.common.to.SkuHasStockVo;
+import com.zljin.gulimall.common.utils.PageUtils;
+import com.zljin.gulimall.common.utils.Query;
 import com.zljin.gulimall.common.utils.R;
+import com.zljin.gulimall.ware.dao.WareSkuDao;
+import com.zljin.gulimall.ware.entity.WareSkuEntity;
 import com.zljin.gulimall.ware.feign.ProductFeignService;
+import com.zljin.gulimall.ware.service.WareOrderTaskService;
+import com.zljin.gulimall.ware.service.WareSkuService;
+import com.zljin.gulimall.ware.vo.WareSkuLockVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zljin.gulimall.common.utils.PageUtils;
-import com.zljin.gulimall.common.utils.Query;
-
-import com.zljin.gulimall.ware.dao.WareSkuDao;
-import com.zljin.gulimall.ware.entity.WareSkuEntity;
-import com.zljin.gulimall.ware.service.WareSkuService;
 
 
 @Service("wareSkuService")
@@ -29,6 +30,9 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     @Autowired
     WareSkuDao wareSkuDao;
+
+    @Autowired
+    WareOrderTaskService orderTaskService;
 
     @Autowired
     ProductFeignService productFeignService;
@@ -101,6 +105,13 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             vo.setHasStock(count == null ? false : count > 0);
             return vo;
         }).collect(Collectors.toList());
+    }
+
+
+    @Transactional
+    @Override
+    public Boolean orderLockStock(WareSkuLockVo vo) {
+        return true;
     }
 
 }
