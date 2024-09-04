@@ -6,6 +6,8 @@ https://gitee.com/leifengyang/gulimall
 
 https://github.com/zljin/document/tree/master/cs/gulimall
 
+https://github.com/NiceSeason/gulimall-learning/tree/master/docs
+
 
 ## 快速开发之逆向工程
 
