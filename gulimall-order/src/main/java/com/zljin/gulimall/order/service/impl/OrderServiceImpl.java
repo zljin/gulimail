@@ -1,9 +1,11 @@
 package com.zljin.gulimall.order.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.zljin.gulimall.common.exception.NoStockException;
+import com.zljin.gulimall.common.to.mq.OrderTo;
 import com.zljin.gulimall.common.utils.R;
 import com.zljin.gulimall.common.utils.ThreadPoolManager;
 import com.zljin.gulimall.common.vo.MemberRespVo;
@@ -190,7 +192,41 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         }
         response.setCode(0);//0为返回成功
         response.setOrder(order.getOrder());
+
+        //异步分布式事务最终一致性，进行定时关单
+        rabbitTemplate.convertAndSend("order-event-exchange","order.create.order",order.getOrder());
         return response;
+    }
+
+    @Override
+    public OrderEntity getOrderByOrderSn(String orderSn) {
+        return this.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderSn));
+    }
+
+    @Override
+    public void closeOrder(OrderEntity entity) {
+        //查询当前这个订单的最新状态
+        OrderEntity orderEntity = this.getById(entity.getId());
+        if (orderEntity.getStatus() == OrderStatusEnum.CREATE_NEW.getCode()) {
+            //关单
+            OrderEntity update = new OrderEntity();
+            update.setId(entity.getId());
+            update.setStatus(OrderStatusEnum.CANCLED.getCode());
+            this.updateById(update);
+            OrderTo orderTo = new OrderTo();
+            BeanUtil.copyProperties(orderEntity, orderTo);
+            /**
+             * 后期优化todo
+             * 1. 保证消息一定会发送出去，每一个消息都可以做好日志记录（给数据库保存每一个消息的详细信息）。
+             * 2. 定期扫描数据库将失败的消息再发送一遍
+             * 3. 将没法送成功的消息进行重试发送
+             */
+            try {
+                rabbitTemplate.convertAndSend("order-event-exchange", "order.release.other", orderTo);
+            } catch (Exception e) {
+                //3
+            }
+        }
     }
 
     private R lockStock(OrderCreateTo order) {
