@@ -1,19 +1,26 @@
 package com.zljin.gulimall.ware.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zljin.gulimall.common.exception.NoStockException;
 import com.zljin.gulimall.common.to.SkuHasStockVo;
 import com.zljin.gulimall.common.utils.PageUtils;
 import com.zljin.gulimall.common.utils.Query;
 import com.zljin.gulimall.common.utils.R;
 import com.zljin.gulimall.ware.dao.WareSkuDao;
+import com.zljin.gulimall.ware.entity.WareOrderTaskDetailEntity;
+import com.zljin.gulimall.ware.entity.WareOrderTaskEntity;
 import com.zljin.gulimall.ware.entity.WareSkuEntity;
 import com.zljin.gulimall.ware.feign.ProductFeignService;
+import com.zljin.gulimall.ware.service.WareOrderTaskDetailService;
 import com.zljin.gulimall.ware.service.WareOrderTaskService;
 import com.zljin.gulimall.ware.service.WareSkuService;
+import com.zljin.gulimall.ware.vo.OrderItemVo;
+import com.zljin.gulimall.ware.vo.SkuWareHasStock;
 import com.zljin.gulimall.ware.vo.WareSkuLockVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,9 +42,14 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     WareOrderTaskService orderTaskService;
 
     @Autowired
+    WareOrderTaskDetailService orderTaskDetailService;
+
+    @Autowired
     ProductFeignService productFeignService;
+
     /**
      * 查询某一商品在某一个仓库的数据情况
+     *
      * @param params
      * @return
      */
@@ -83,7 +95,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             try {
                 R info = productFeignService.info(skuId);
                 Map<String, Object> data = (Map<String, Object>) info.get("skuInfo");
-                if (MapUtil.getInt(info,"code") == 0) {
+                if (MapUtil.getInt(info, "code") == 0) {
                     skuEntity.setSkuName((String) data.get("skuName"));
                 }
             } catch (Exception e) {
@@ -111,6 +123,49 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     @Transactional
     @Override
     public Boolean orderLockStock(WareSkuLockVo vo) {
+
+        //step1: 保存库存工作单详情历史记录用来追溯
+        WareOrderTaskEntity taskEntity = new WareOrderTaskEntity();
+        taskEntity.setOrderSn(vo.getOrderSn());
+        orderTaskService.save(taskEntity);
+
+
+        //step2: 查询拥有skuId的所有仓库的wareId
+        List<SkuWareHasStock> skuWareHasStocks = vo.getLocks().stream().map(item -> {
+            SkuWareHasStock stock = new SkuWareHasStock();
+            Long skuId = item.getSkuId();
+            stock.setSkuId(skuId);
+            stock.setNum(item.getCount());
+            //查询这个商品在哪里有库存
+            List<Long> wareIds = wareSkuDao.listWareIdHasSkuStock(skuId);
+            stock.setWareId(wareIds);
+            return stock;
+        }).collect(Collectors.toList());
+
+        //step3: 开始锁定库存
+        for (SkuWareHasStock hasStock : skuWareHasStocks) {
+            Boolean skuStocked = false;
+            Long skuId = hasStock.getSkuId();
+            List<Long> wareIds = hasStock.getWareId();
+            if (CollectionUtil.isEmpty(wareIds)) {//所有仓库都没货
+                throw new NoStockException(skuId);
+            }
+            for (Long wareId : wareIds) {
+                Long count = wareSkuDao.lockSkuStock(skuId, wareId, hasStock.getNum());
+                if (count == 1) {//成功就返回1,锁定成功,否则重试下一个仓库
+                    skuStocked = true;
+                    //step4: 保存库存工作单详情细节表历史记录用来追溯
+                    WareOrderTaskDetailEntity entity = new WareOrderTaskDetailEntity(null, skuId, "", hasStock.getNum(), taskEntity.getId(), wareId, 1);
+                    orderTaskDetailService.save(entity);
+                    break;//任意找个仓库就行
+                }
+            }
+
+            if (!skuStocked) {
+                //当前商品所有仓库都没有锁住
+                throw new NoStockException(skuId);
+            }
+        }
         return true;
     }
 
