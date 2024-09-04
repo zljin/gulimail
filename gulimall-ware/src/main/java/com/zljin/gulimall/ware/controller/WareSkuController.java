@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.zljin.gulimall.common.exception.BizCodeEnum;
+import com.zljin.gulimall.common.exception.NoStockException;
 import com.zljin.gulimall.common.to.SkuHasStockVo;
+import com.zljin.gulimall.ware.vo.WareSkuLockVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +35,17 @@ import com.zljin.gulimall.common.utils.R;
 public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
+
+
+    @PostMapping("/lock/order")
+    public R orderLockStock(@RequestBody WareSkuLockVo vo){
+        try{
+            Boolean stock = wareSkuService.orderLockStock(vo);
+            return R.ok();
+        }catch (NoStockException e){
+            return R.error(BizCodeEnum.NO_STOCK_EXCEPTION.getCode(),e.getMessage());
+        }
+    }
 
 
     /**

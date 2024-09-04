@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS `oms_order`;
 CREATE TABLE `oms_order` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_id` bigint(20) DEFAULT NULL COMMENT 'member_id',
-  `order_sn` char(32) DEFAULT NULL COMMENT '订单号',
+  `order_sn` varchar(255) DEFAULT NULL COMMENT '订单号',
   `coupon_id` bigint(20) DEFAULT NULL COMMENT '使用的优惠券',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `username` varchar(200) DEFAULT NULL COMMENT '用户名',
@@ -80,7 +80,7 @@ DROP TABLE IF EXISTS `oms_order_item`;
 CREATE TABLE `oms_order_item` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `order_id` bigint(20) DEFAULT NULL COMMENT 'order_id',
-  `order_sn` char(32) DEFAULT NULL COMMENT 'order_sn',
+  `order_sn` varchar(255) DEFAULT NULL COMMENT 'order_sn',
   `spu_id` bigint(20) DEFAULT NULL COMMENT 'spu_id',
   `spu_name` varchar(255) DEFAULT NULL COMMENT 'spu_name',
   `spu_pic` varchar(500) DEFAULT NULL COMMENT 'spu_pic',
@@ -131,7 +131,7 @@ CREATE TABLE `oms_order_return_apply` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `order_id` bigint(20) DEFAULT NULL COMMENT 'order_id',
   `sku_id` bigint(20) DEFAULT NULL COMMENT '退货商品id',
-  `order_sn` char(32) DEFAULT NULL COMMENT '订单编号',
+  `order_sn` varchar(255) DEFAULT NULL COMMENT '订单编号',
   `create_time` datetime DEFAULT NULL COMMENT '申请时间',
   `member_username` varchar(64) DEFAULT NULL COMMENT '会员用户名',
   `return_amount` decimal(18,4) DEFAULT NULL COMMENT '退款金额',
@@ -205,7 +205,7 @@ CREATE TABLE `oms_order_setting` (
 DROP TABLE IF EXISTS `oms_payment_info`;
 CREATE TABLE `oms_payment_info` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `order_sn` char(32) DEFAULT NULL COMMENT '订单号（对外业务号）',
+  `order_sn` varchar(255) DEFAULT NULL COMMENT '订单号（对外业务号）',
   `order_id` bigint(20) DEFAULT NULL COMMENT '订单id',
   `alipay_trade_no` varchar(50) DEFAULT NULL COMMENT '支付宝交易流水号',
   `total_amount` decimal(18,4) DEFAULT NULL COMMENT '支付总金额',
