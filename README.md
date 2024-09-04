@@ -1,14 +1,13 @@
 # gulimall-backend
 
-资料文档参考
+## 资料文档参考
 
-https://github.com/NiceSeason/gulimall-learning/tree/master
+https://gitee.com/leifengyang/gulimall
 
-https://github.com/Gellhorn/gulimall/tree/master
+https://github.com/zljin/document/tree/master/cs/gulimall
 
 
-
-# 快速开发之逆向工程
+## 快速开发之逆向工程
 
 https://gitee.com/renrenio/renren-fast.git
 
