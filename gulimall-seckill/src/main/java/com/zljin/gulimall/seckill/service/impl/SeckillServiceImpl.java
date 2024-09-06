@@ -1,6 +1,7 @@
 package com.zljin.gulimall.seckill.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONUtil;
 import com.zljin.gulimall.common.utils.R;
 import com.zljin.gulimall.seckill.feign.CouponFeignService;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -87,6 +89,34 @@ public class SeckillServiceImpl implements SeckillService {
                 break;
             }
             return null;
+        }
+        return null;
+    }
+
+    @Override
+    public SecKillSkuRedisTo getSkuSeckillInfo(Long skuId) {
+        //1、找到所有需要参与秒杀的商品的key
+        BoundHashOperations<String, String, String> hashOps = redisTemplate.boundHashOps(SKUKILL_CACHE_PREFIX);
+        Set<String> keys = hashOps.keys();
+        if(CollectionUtil.isEmpty(keys)){
+            return null;
+        }
+        String regx = "\\d_" + skuId;
+        for (String key : keys) {
+            //6_4
+            if (Pattern.matches(regx, key)) {
+                String json = hashOps.get(key);
+                SecKillSkuRedisTo skuRedisTo = JSONUtil.toBean(json, SecKillSkuRedisTo.class);
+                if (skuRedisTo == null) return null;
+                long current = new Date().getTime();
+                if (current >= skuRedisTo.getStartTime() && current <= skuRedisTo.getEndTime()) {
+                    return skuRedisTo;
+                } else {
+                    //当前商品已经过了秒杀时间要直接删除
+                    hashOps.delete(key);
+                    skuRedisTo.setRandomCode(null);
+                }
+            }
         }
         return null;
     }
