@@ -49,5 +49,9 @@
         <result property="remark" column="remark"/>
     </resultMap>
 
+    <update id="updateOrderStatus">
+        UPDATE `oms_order` SET `status`=#{code} WHERE order_sn=#{outTradeNo}
+    </update>
+
 
 </mapper>
