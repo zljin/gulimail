@@ -20,6 +20,7 @@ import cn.hutool.core.lang.TypeReference;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,35 @@ public class SeckillServiceImpl implements SeckillService {
             //2、缓存活动的关联商品信息
             saveSessionSkuInfos(sessionData);
         }
+    }
+
+    @Override
+    public List<SecKillSkuRedisTo> getCurrentSeckillSkus() {
+        //1、确定当前时间属于哪个秒杀场次。
+        long time = new Date().getTime();
+        Set<String> keys = redisTemplate.keys(SESSIONS_CACHE_PREFIX + "*");
+        for (String key : keys) {
+            //seckill:sessions:1725588000000_1727666365000
+            String replace = key.replace(SESSIONS_CACHE_PREFIX, "");
+            String[] s = replace.split("_");
+            Long start = Long.parseLong(s[0]);
+            Long end = Long.parseLong(s[1]);
+            if (time >= start && time <= end) {
+                //2、获取这个秒杀场次需要的所有商品信息
+                List<String> range = redisTemplate.opsForList().range(key, -100, 100);
+                BoundHashOperations<String, String, String> hashOps = redisTemplate.boundHashOps(SKUKILL_CACHE_PREFIX);
+                List<String> list = hashOps.multiGet(range);
+                if (list != null) {
+                    return list.stream().map(item -> {
+                        return JSONUtil.toBean(item, SecKillSkuRedisTo.class);
+//                        redis.setRandomCode(null); 当前秒杀开始就需要随机码
+                    }).collect(Collectors.toList());
+                }
+                break;
+            }
+            return null;
+        }
+        return null;
     }
 
     private void saveSessionInfos(List<SeckillSesssionsWithSkus> sessionData) {
