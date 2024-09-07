@@ -41,6 +41,7 @@ public class SeckillController {
     @ResponseBody
     @GetMapping("/sku/seckill/{skuId}")
     public R getSkuSeckillInfo(@PathVariable("skuId") Long skuId) {
+        log.info("getSkuSeckillInfo正在执行。。。");
         SecKillSkuRedisTo to = seckillService.getSkuSeckillInfo(skuId);
         return R.ok().setData(to);
     }
