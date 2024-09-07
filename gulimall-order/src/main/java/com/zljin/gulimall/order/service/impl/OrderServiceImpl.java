@@ -6,18 +6,21 @@ import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.zljin.gulimall.common.exception.NoStockException;
 import com.zljin.gulimall.common.to.mq.OrderTo;
+import com.zljin.gulimall.common.to.mq.SeckillOrderTo;
 import com.zljin.gulimall.common.utils.R;
 import com.zljin.gulimall.common.utils.ThreadPoolManager;
 import com.zljin.gulimall.common.vo.MemberRespVo;
 import com.zljin.gulimall.order.config.LoginUserInterceptor;
 import com.zljin.gulimall.order.constant.OrderConstant;
 import com.zljin.gulimall.order.entity.OrderItemEntity;
+import com.zljin.gulimall.order.entity.PaymentInfoEntity;
 import com.zljin.gulimall.order.enume.OrderStatusEnum;
 import com.zljin.gulimall.order.feign.CartFeignService;
 import com.zljin.gulimall.order.feign.MemberFeignService;
 import com.zljin.gulimall.order.feign.ProductFeignService;
 import com.zljin.gulimall.order.feign.WmsFeignService;
 import com.zljin.gulimall.order.service.OrderItemService;
+import com.zljin.gulimall.order.service.PaymentInfoService;
 import com.zljin.gulimall.order.to.OrderCreateTo;
 import com.zljin.gulimall.order.vo.*;
 import lombok.extern.slf4j.Slf4j;
@@ -77,6 +80,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Autowired
     OrderItemService orderItemService;
+
+    @Autowired
+    PaymentInfoService paymentInfoService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -227,6 +233,75 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 //3
             }
         }
+    }
+
+    @Override
+    public PayVo getOrderPay(String orderSn) {
+        PayVo payVo = new PayVo();
+        OrderEntity order = this.getOrderByOrderSn(orderSn);
+        BigDecimal bigDecimal = order.getPayAmount().setScale(2, BigDecimal.ROUND_UP);
+        payVo.setTotal_amount(bigDecimal.toString());
+        payVo.setOut_trade_no(order.getOrderSn());
+        List<OrderItemEntity> order_sn = orderItemService.list(new QueryWrapper<OrderItemEntity>().eq("order_sn", orderSn));
+        OrderItemEntity entity = order_sn.get(0);
+        payVo.setSubject(entity.getSkuName());
+        payVo.setBody(entity.getSkuAttrsVals());
+        return payVo;
+    }
+
+    @Override
+    public PageUtils queryPageWithItem(Map<String, Object> params) {
+        MemberRespVo memberRespVo = LoginUserInterceptor.loginUser.get();
+        IPage<OrderEntity> page = this.page(
+                new Query<OrderEntity>().getPage(params),
+                new QueryWrapper<OrderEntity>().eq("member_id", memberRespVo.getId()).orderByDesc("id")
+        );
+        List<OrderEntity> orderSn = page.getRecords().stream().map(order -> {
+            List<OrderItemEntity> itemEntities = orderItemService.list(new QueryWrapper<OrderItemEntity>().eq("order_sn", order.getOrderSn()));
+            order.setItemEntities(itemEntities);
+            return order;
+        }).collect(Collectors.toList());
+        page.setRecords(orderSn);
+        return new PageUtils(page);
+    }
+
+    @Override
+    public String handlePayResult(PayAsyncVo vo) {
+        //1、保存交易流水
+        PaymentInfoEntity infoEntity = new PaymentInfoEntity();
+        infoEntity.setAlipayTradeNo(vo.getTrade_no());
+        infoEntity.setOrderSn(vo.getOut_trade_no());
+        infoEntity.setPaymentStatus(vo.getTrade_status());
+        infoEntity.setCallbackTime(vo.getNotify_time());
+
+        paymentInfoService.save(infoEntity);
+
+        //2、修改订单的状态信息
+        if (vo.getTrade_status().equals("TRADE_SUCCESS") || vo.getTrade_status().equals("TRADE_FINISHED")) {
+            //支付成功状态
+            String outTradeNo = vo.getOut_trade_no();
+            this.baseMapper.updateOrderStatus(outTradeNo,OrderStatusEnum.PAYED.getCode());
+        }
+        return "success";
+    }
+
+    @Override
+    public void createSeckillOrder(SeckillOrderTo seckillOrder) {
+        //保存订单信息
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setOrderSn(seckillOrder.getOrderSn());
+        orderEntity.setUserId(seckillOrder.getMemberId());
+        orderEntity.setStatus(OrderStatusEnum.CREATE_NEW.getCode());
+        BigDecimal multiply = seckillOrder.getSeckillPrice().multiply(new BigDecimal("" + seckillOrder.getNum()));
+        orderEntity.setPayAmount(multiply);
+        this.save(orderEntity);
+        //保存订单项信息
+        OrderItemEntity orderItemEntity = new OrderItemEntity();
+        orderItemEntity.setOrderSn(seckillOrder.getOrderSn());
+        orderItemEntity.setSkuQuantity(seckillOrder.getNum());
+        orderItemEntity.setRealAmount(multiply);
+        //以后再说 获取当前SKU的详细信息进行设置 productFeignService.getSpuInfoBySkuId()
+        orderItemService.save(orderItemEntity);
     }
 
     private R lockStock(OrderCreateTo order) {

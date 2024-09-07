@@ -1,22 +1,28 @@
 package com.zljin.gulimall.product.service.impl;
 
+import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zljin.gulimall.common.utils.PageUtils;
 import com.zljin.gulimall.common.utils.Query;
+import com.zljin.gulimall.common.utils.R;
 import com.zljin.gulimall.product.dao.SkuInfoDao;
 import com.zljin.gulimall.product.entity.SkuImagesEntity;
 import com.zljin.gulimall.product.entity.SkuInfoEntity;
 import com.zljin.gulimall.product.entity.SpuInfoDescEntity;
+import com.zljin.gulimall.product.feign.SeckillFeignService;
 import com.zljin.gulimall.product.service.*;
 import com.zljin.gulimall.common.utils.ThreadPoolManager;
+import com.zljin.gulimall.product.vo.SeckillInfoVo;
 import com.zljin.gulimall.product.vo.SkuItemSaleAttrVo;
 import com.zljin.gulimall.product.vo.SkuItemVo;
 import com.zljin.gulimall.product.vo.SpuItemAttrGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,6 +45,9 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 
     @Autowired
     SkuSaleAttrValueService skuSaleAttrValueService;
+
+    @Autowired
+    SeckillFeignService seckillFeignService;
 
 
     @Override
@@ -162,8 +171,21 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
             skuItemVo.setImages(images);
         }, ThreadPoolManager.THREAD_POOL_EXECUTOR);
 
+
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        //3、查询当前sku是否参与秒杀优惠
+        CompletableFuture<Void> secKillFuture = CompletableFuture.runAsync(() -> {
+            RequestContextHolder.setRequestAttributes(requestAttributes);
+            R seckillInfo = seckillFeignService.getSkuSeckillInfo(skuId);
+            if (seckillInfo.getCode() == 0) {
+                SeckillInfoVo seckillInfoVo = seckillInfo.getData(new TypeReference<SeckillInfoVo>() {
+                });
+                skuItemVo.setSeckillInfo(seckillInfoVo);
+            }
+        }, ThreadPoolManager.THREAD_POOL_EXECUTOR);
+
         //等到所有任务都完成
-        CompletableFuture.allOf(saleAttrFuture,descFuture,baseAttrFuture,imageFuture).get();
+        CompletableFuture.allOf(saleAttrFuture,descFuture,baseAttrFuture,imageFuture,secKillFuture).get();
         return skuItemVo;
     }
 
