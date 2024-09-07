@@ -7,8 +7,10 @@ import com.zljin.gulimall.seckill.to.SecKillSkuRedisTo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -44,6 +46,15 @@ public class SeckillController {
         log.info("getSkuSeckillInfo正在执行。。。");
         SecKillSkuRedisTo to = seckillService.getSkuSeckillInfo(skuId);
         return R.ok().setData(to);
+    }
+
+    @GetMapping("/kill")
+    public String secKill(@RequestParam("killId") String killId,
+                          @RequestParam("key") String key,
+                          @RequestParam("num") Integer num,
+                          Model model){
+        model.addAttribute("orderSn",seckillService.kill(killId,key,num));
+        return "success";
     }
 
 }

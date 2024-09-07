@@ -6,6 +6,7 @@ import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.zljin.gulimall.common.exception.NoStockException;
 import com.zljin.gulimall.common.to.mq.OrderTo;
+import com.zljin.gulimall.common.to.mq.SeckillOrderTo;
 import com.zljin.gulimall.common.utils.R;
 import com.zljin.gulimall.common.utils.ThreadPoolManager;
 import com.zljin.gulimall.common.vo.MemberRespVo;
@@ -282,6 +283,25 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             this.baseMapper.updateOrderStatus(outTradeNo,OrderStatusEnum.PAYED.getCode());
         }
         return "success";
+    }
+
+    @Override
+    public void createSeckillOrder(SeckillOrderTo seckillOrder) {
+        //保存订单信息
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setOrderSn(seckillOrder.getOrderSn());
+        orderEntity.setUserId(seckillOrder.getMemberId());
+        orderEntity.setStatus(OrderStatusEnum.CREATE_NEW.getCode());
+        BigDecimal multiply = seckillOrder.getSeckillPrice().multiply(new BigDecimal("" + seckillOrder.getNum()));
+        orderEntity.setPayAmount(multiply);
+        this.save(orderEntity);
+        //保存订单项信息
+        OrderItemEntity orderItemEntity = new OrderItemEntity();
+        orderItemEntity.setOrderSn(seckillOrder.getOrderSn());
+        orderItemEntity.setSkuQuantity(seckillOrder.getNum());
+        orderItemEntity.setRealAmount(multiply);
+        //以后再说 获取当前SKU的详细信息进行设置 productFeignService.getSpuInfoBySkuId()
+        orderItemService.save(orderItemEntity);
     }
 
     private R lockStock(OrderCreateTo order) {
