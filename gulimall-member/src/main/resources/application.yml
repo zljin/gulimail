@@ -15,6 +15,11 @@ spring:
         server-addr: 127.0.0.1:8848
         import-check:
           enabled: false
+    # sentinel控制台地址
+    sentinel:
+      transport:
+        dashboard: localhost:8849
+        port: 8719
   application:
     name: gulimall-member
 
@@ -30,3 +35,14 @@ mybatis-plus:
       logic-not-delete-value: 0
 server:
   port: 11113
+
+# 暴露所有监控端点，使得sentinel可以实时监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+feign:
+  sentinel:
+    enabled: true

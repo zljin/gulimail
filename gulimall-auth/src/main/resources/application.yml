@@ -9,6 +9,11 @@ spring:
         server-addr: 127.0.0.1:8848
         import-check:
           enabled: false
+    # sentinel控制台地址
+    sentinel:
+      transport:
+        dashboard: localhost:8849
+        port: 8719
   application:
     name: gulimall-auth
   thymeleaf:
@@ -33,3 +38,15 @@ oauth:
     redirectUrl: http://auth.gulimall.com/oauth2.0/github/success
     oauth2SuccessUrl: https://github.com/login/oauth/access_token?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&code=CODE&redirect_uri=CALLBACK
     oauthOpenApiUrl1: https://api.github.com/user
+
+
+# 暴露所有监控端点，使得sentinel可以实时监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+feign:
+  sentinel:
+    enabled: true
