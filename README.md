@@ -585,4 +585,7 @@ https://github.com/zljin/gulimall-backend/blob/master/gulimall-order/src/main/ja
 ![](https://cdn.jsdelivr.net/gh/zljin/document/img/technical/seckillflow.png?raw=true)
 
 
+## Sentinel
+
+> https://github.com/alibaba/Sentinel/wiki/%E6%8E%A7%E5%88%B6%E5%8F%B0#2-%E5%90%AF%E5%8A%A8%E6%8E%A7%E5%88%B6%E5%8F%B0
 
