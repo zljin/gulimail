@@ -1,0 +1,21 @@
+server:
+  port: 9411
+
+spring:
+  application:
+    name: zipkin-server
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+      discovery:
+        server-addr: 127.0.0.1:8848
+  # 个人编程习惯，当创建多个bean类型时，可以覆盖
+  main:
+    allow-bean-definition-overriding: true
+
+management:
+  metrics:
+    web:
+      server:
+        auto-time-requests: false
