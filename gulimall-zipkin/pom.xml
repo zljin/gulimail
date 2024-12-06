@@ -50,6 +50,11 @@
             <artifactId>zipkin-autoconfigure-ui</artifactId>
             <version>${zipkin.server.version}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.zipkin.java</groupId>-->
+<!--            <artifactId>zipkin-autoconfigure-collector-rabbitmq</artifactId>-->
+<!--            <version>${zipkin.server.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
